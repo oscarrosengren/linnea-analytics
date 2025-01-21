@@ -92,7 +92,7 @@ if uploaded_file:
                 mime="text/csv"
             )
         else:
-            st.warning("Please enter a valid Shipping Name to filter. Det behöver vara exakt som det står under leverans "Företag". Inga mellanslag")
+            st.warning("Please enter a valid Shipping Name to filter. Det behöver vara exakt som det står under leverans under Företag. Inga mellanslag")
     else:
         st.error("The required columns ('Order ID', 'Product', 'Quantity', 'Shipping Name', 'Article number') are not in the dataset.")
 else:
