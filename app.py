@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 # Streamlit title and file uploader
-st.title("Order Analysis Application")
+st.title("Orderanalys på kundnivå")
 
 # Upload file
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
@@ -47,7 +47,7 @@ if uploaded_file:
 
         # Input for Shipping Name filter
         shipping_name_to_filter = st.text_input(
-            "Enter Shipping Name to filter:", "Bubbel & Plask Simskolor AB")
+            "Enter Shipping Name to filter:", "Apohem AB")
 
         if shipping_name_to_filter:
             # Filter data by Shipping Name
@@ -92,7 +92,7 @@ if uploaded_file:
                 mime="text/csv"
             )
         else:
-            st.warning("Please enter a valid Shipping Name to filter.")
+            st.warning("Please enter a valid Shipping Name to filter. Det behöver vara exakt som det står under leverans "Företag". Inga mellanslag")
     else:
         st.error("The required columns ('Order ID', 'Product', 'Quantity', 'Shipping Name', 'Article number') are not in the dataset.")
 else:
