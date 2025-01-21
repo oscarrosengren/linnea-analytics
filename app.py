@@ -2,16 +2,16 @@ import streamlit as st
 import pandas as pd
 
 def process_shipping_name(data, shipping_name):
-    # Check if 'Shipping name' exists
+    # Check if 'Shipping Name' exists
     if 'Shipping name' not in data.columns:
         st.error("Fil har ej kolumn shipping name exporters file med leveransadress")
         return None
 
     # Filter for the specific shipping name
-    filtered_data = data[data['Shipping name'] == shipping_name]
+    filtered_data = data[data['Shipping Name'] == shipping_name]
 
     if filtered_data.empty:
-        st.warning(f"No data found for Shipping name: {shipping_name}")
+        st.warning(f"No data found for Shipping Name: {shipping_name}")
         return None
 
     # Extract distinct products
