@@ -1,50 +1,99 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
 
-def process_shipping_name(data, shipping_name):
-    # Check if 'Shipping Name' exists
-    if 'Shipping name' not in data.columns:
-        st.error("Fil har ej kolumn shipping name exporters file med leveransadress")
-        return None
+# Streamlit title and file uploader
+st.title("Order Analysis Application")
 
-    # Filter for the specific shipping name
-    filtered_data = data[data['Shipping Name'] == shipping_name]
-
-    if filtered_data.empty:
-        st.warning(f"No data found for Shipping Name: {shipping_name}")
-        return None
-
-    # Extract distinct products
-    distinct_products = filtered_data['Product'].drop_duplicates()
-    return distinct_products
-
-# Streamlit app layout
-st.title("Shipping Name Filter App")
-st.write("Upload a file and filter data by a specific shipping name.")
-
-# File upload
+# Upload file
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
-if uploaded_file is not None:
+if uploaded_file:
+    # Read the file
     try:
-        # Load the file
         data = pd.read_csv(uploaded_file, encoding='utf-16', sep='\t')
-        st.success("File uploaded and loaded successfully!")
-
-        # Display a sample of the data
-        if st.checkbox("Show raw data"):
-            st.write(data)
-
-        # Input for shipping name
-        shipping_name = st.text_input("Enter the specific Shipping Name", "Bubbel & Plask Simskolor AB")
-
-        if shipping_name:
-            # Process the data
-            result = process_shipping_name(data, shipping_name)
-
-            if result is not None:
-                st.write(f"Distinct products for Shipping name: **{shipping_name}**")
-                st.table(result)
-
     except Exception as e:
-        st.error(f"An error occurred while processing the file: {e}")
+        st.error(f"Failed to read the file: {e}")
+        st.stop()
+
+    # Function to handle order times
+    def order_time():
+        data['Order time'] = pd.to_datetime(
+            data['Order time'], errors='coerce')
+
+        # Find first and last order time
+        first_order_time = data['Order time'].min()
+        last_order_time = data['Order time'].max()
+
+        st.write(f"**First Order Time:** {first_order_time}")
+        st.write(f"**Last Order Time:** {last_order_time}")
+
+    order_time()
+
+    # Check required columns
+    required_columns = ['Order ID', 'Product',
+                        'Quantity', 'Shipping Name', 'Article number']
+    if all(column in data.columns for column in required_columns):
+        # Group data by Order ID
+        grouped_data = data.groupby('Order ID').agg({
+            'Product': lambda x: ', '.join(map(str, x)),
+            'Quantity': lambda x: ', '.join(map(str, x)),
+            'Shipping Name': 'first',
+            'Article number': lambda x: ', '.join(map(str, x))
+        }).reset_index()
+
+        # Display grouped data
+        st.subheader("Grouped Data")
+        st.dataframe(grouped_data)
+
+        # Input for Shipping Name filter
+        shipping_name_to_filter = st.text_input(
+            "Enter Shipping Name to filter:", "Bubbel & Plask Simskolor AB")
+
+        if shipping_name_to_filter:
+            # Filter data by Shipping Name
+            filtered_orders = grouped_data[grouped_data['Shipping Name']
+                                           == shipping_name_to_filter]
+
+            # Display filtered grouped data
+            st.subheader(
+                f"Filtered Grouped Data for Shipping Name: {shipping_name_to_filter}")
+            st.dataframe(filtered_orders)
+
+            # Expand products, article numbers, and quantities
+            expanded_data = []
+            for _, row in filtered_orders.iterrows():
+                products = row['Product'].split(', ')
+                article_numbers = row['Article number'].split(', ')
+                quantities = row['Quantity'].split(', ')
+
+                for product, article_number, quantity in zip(products, article_numbers, quantities):
+                    expanded_data.append({
+                        'Product': product.strip(),
+                        'Article number': article_number.strip(),
+                        'Quantity': int(quantity.strip())
+                    })
+
+            # Create a detailed table
+            detailed_table = pd.DataFrame(expanded_data).groupby(['Product', 'Article number'], as_index=False).agg({
+                'Quantity': 'sum'
+            })
+
+            # Display results
+            st.subheader(
+                f"Detailed Products for Shipping Name: {shipping_name_to_filter}")
+            st.dataframe(detailed_table)
+
+            # Download results
+            output_csv = detailed_table.to_csv(index=False, encoding='utf-8')
+            st.download_button(
+                label="Download Filtered Data as CSV",
+                data=output_csv,
+                file_name="filtered_products_articles_with_quantities.csv",
+                mime="text/csv"
+            )
+        else:
+            st.warning("Please enter a valid Shipping Name to filter.")
+    else:
+        st.error("The required columns ('Order ID', 'Product', 'Quantity', 'Shipping Name', 'Article number') are not in the dataset.")
+else:
+    st.info("Please upload a CSV file to start.")
