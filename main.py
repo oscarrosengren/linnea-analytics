@@ -15,7 +15,7 @@ def run_script(script_name):
         st.error(f"Error running script: {e}")
 
 # Streamlit UI
-st.title("📜 Script Launcher")
+st.title("Linnea Script")
 
 repo_dir = os.path.dirname(os.path.abspath(__file__))
 scripts = get_python_scripts(repo_dir)
