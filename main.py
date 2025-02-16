@@ -26,13 +26,6 @@ if not os.path.exists(pages_dir):
 # List Python files in the "pages" directory
 page_files = [f for f in os.listdir(pages_dir) if f.endswith(".py")]
 
-# Sidebar navigation
-st.sidebar.title("Navigation")
-selected_page = st.sidebar.radio("Go to", ["Home"] + [p[:-3].replace("_", " ").title() for p in page_files])
-
-st.sidebar.markdown("---")
-st.sidebar.info("Select a page from the sidebar to navigate.")
-
 # Home page
 if selected_page == "Home":
     st.title("Welcome to the Multi-Page Streamlit App 🚀")
