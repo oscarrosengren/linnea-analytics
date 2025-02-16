@@ -19,10 +19,3 @@ st.title("📜 Script Launcher")
 
 repo_dir = os.path.dirname(os.path.abspath(__file__))
 scripts = get_python_scripts(repo_dir)
-
-if not scripts:
-    st.warning("No Python scripts found in the repository.")
-else:
-    selected_script = st.selectbox("Select a script to run:", scripts)
-    if st.button("Run Script"):
-        run_script(selected_script)
