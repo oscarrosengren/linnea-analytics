@@ -26,11 +26,6 @@ if not os.path.exists(pages_dir):
 # List Python files in the "pages" directory
 page_files = [f for f in os.listdir(pages_dir) if f.endswith(".py")]
 
-# Home page
-if selected_page == "Home":
-    st.title("Welcome to the Multi-Page Streamlit App 🚀")
-    st.write("This app dynamically loads pages from the repository's `pages/` directory.")
-
 # Load selected page
 else:
     page_filename = selected_page.lower().replace(" ", "_") + ".py"
