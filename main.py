@@ -7,4 +7,4 @@ import subprocess
 # Streamlit UI
 st.title("Linnea Script")
 
-repo_dir = os.path.dirname(os.path.abspath(__file__))
+#repo_dir = os.path.dirname(os.path.abspath(__file__))
