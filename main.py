@@ -30,10 +30,10 @@ page_files = [f for f in os.listdir(pages_dir) if f.endswith(".py")]
 page_filename = selected_page.lower().replace(" ", "_") + ".py"
 page_path = os.path.join(pages_dir, page_filename)
 
-    if os.path.exists(page_path):
-        spec = importlib.util.spec_from_file_location("page_module", page_path)
-        page_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(page_module)
-    else:
-        st.error("Page not found!")
+if os.path.exists(page_path):
+    spec = importlib.util.spec_from_file_location("page_module", page_path)
+    page_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(page_module)
+else:
+    st.error("Page not found!")
 
