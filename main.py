@@ -27,9 +27,8 @@ if not os.path.exists(pages_dir):
 page_files = [f for f in os.listdir(pages_dir) if f.endswith(".py")]
 
 # Load selected page
-else:
-    page_filename = selected_page.lower().replace(" ", "_") + ".py"
-    page_path = os.path.join(pages_dir, page_filename)
+page_filename = selected_page.lower().replace(" ", "_") + ".py"
+page_path = os.path.join(pages_dir, page_filename)
 
     if os.path.exists(page_path):
         spec = importlib.util.spec_from_file_location("page_module", page_path)
