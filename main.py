@@ -8,4 +8,3 @@ import subprocess
 st.title("Linnea Script")
 
 repo_dir = os.path.dirname(os.path.abspath(__file__))
-scripts = get_python_scripts(repo_dir)
