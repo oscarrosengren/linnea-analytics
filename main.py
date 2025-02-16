@@ -3,10 +3,8 @@ import os
 import subprocess
 
 def get_python_scripts(directory):
-    """Returns a list of Python script filenames in the given directory, excluding the main script."""
-    main_script = os.path.basename(__file__)
-    excluded_files = [main_script, "main.py", "app.py"]  # Ensure main script and known entry points are excluded
-    return [f for f in os.listdir(directory) if f.endswith(".py") and f not in excluded_files]
+    """Returns a list of Python script filenames in the given directory."""
+    return [f for f in os.listdir(directory) if f.endswith(".py") and f != os.path.basename(__file__)]
 
 def run_script(script_name):
     """Executes a selected Python script."""
