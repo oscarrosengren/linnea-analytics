@@ -1,39 +1,28 @@
 import streamlit as st
 import os
-import importlib.util
+import subprocess
 
-# Set Streamlit page title
-st.set_page_config(page_title="Multi-Page Streamlit App", layout="wide")
+def get_python_scripts(directory):
+    """Returns a list of Python script filenames in the given directory."""
+    return [f for f in os.listdir(directory) if f.endswith(".py") and f != os.path.basename(__file__)]
 
-# Function to get the repository root
-def get_repo_root():
-    current_dir = os.path.abspath(os.getcwd())
-    while not os.path.exists(os.path.join(current_dir, ".git")):
-        parent_dir = os.path.dirname(current_dir)
-        if parent_dir == current_dir:
-            return os.getcwd()  # Fallback if not in a Git repo
-        current_dir = parent_dir
-    return current_dir
+def run_script(script_name):
+    """Executes a selected Python script."""
+    try:
+        result = subprocess.run(["python", script_name], capture_output=True, text=True)
+        st.text_area("Output:", result.stdout + result.stderr, height=300)
+    except Exception as e:
+        st.error(f"Error running script: {e}")
 
-# Get repository root directory
-repo_root = get_repo_root()
-pages_dir = os.path.join(repo_root, "pages")
+# Streamlit UI
+st.title("📜 Script Launcher")
 
-# Ensure the "pages" directory exists
-if not os.path.exists(pages_dir):
-    os.makedirs(pages_dir)
+repo_dir = os.path.dirname(os.path.abspath(__file__))
+scripts = get_python_scripts(repo_dir)
 
-# List Python files in the "pages" directory
-page_files = [f for f in os.listdir(pages_dir) if f.endswith(".py")]
-
-# Load selected page
-page_filename = selected_page.lower().replace(" ", "_") + ".py"
-page_path = os.path.join(pages_dir, page_filename)
-
-if os.path.exists(page_path):
-    spec = importlib.util.spec_from_file_location("page_module", page_path)
-    page_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(page_module)
+if not scripts:
+    st.warning("No Python scripts found in the repository.")
 else:
-    st.error("Page not found!")
-
+    selected_script = st.selectbox("Select a script to run:", scripts)
+    if st.button("Run Script"):
+        run_script(selected_script)
