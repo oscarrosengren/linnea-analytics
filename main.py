@@ -19,7 +19,7 @@ def list_python_scripts(directory):
             if f.endswith(".py") and f != homepage]
 
 # Check if a script is selected via query parameter
-params = st.experimental_get_query_params()
+params = st.query_params()  # Updated API: st.query_params() is the new method.
 if "page" in params:
     script_to_run = params["page"][0]
     st.header(f"Running {script_to_run}")
