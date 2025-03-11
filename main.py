@@ -18,21 +18,16 @@ def list_python_scripts(directory):
     return [f for f in os.listdir(directory) 
             if f.endswith(".py") and f != homepage]
 
-# Use st.query_params as a property (no parentheses)
-params = st.query_params
-if "page" in params:
-    script_to_run = params["page"][0]
-    st.header(f"Running {script_to_run}")
-    run_script(script_to_run)
-else:
-    st.title("Homepage")
-    st.write("Select a script to run:")
+# Create a sidebar for multipage navigation.
+st.sidebar.title("Multipage Navigation")
+scripts = list_python_scripts(".")
 
-    # List available scripts
-    scripts = list_python_scripts(".")
-    if scripts:
-        for script in scripts:
-            # Create a clickable link that sets a query parameter.
-            st.markdown(f"[{script}](?page={script})")
-    else:
-        st.info("No Python scripts found in the directory.")
+if scripts:
+    selected_script = st.sidebar.selectbox("Select a script to run", scripts)
+    st.sidebar.write("You selected:", selected_script)
+    st.header(f"Running: {selected_script}")
+    run_script(selected_script)
+else:
+    st.sidebar.info("No Python scripts found in the directory.")
+    st.title("Homepage")
+    st.info("Please add more scripts to the directory to use multipage navigation.")
