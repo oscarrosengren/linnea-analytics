@@ -5,7 +5,7 @@ import runpy
 def run_script(script_path):
     """
     Run the given script as if it were executed as the main program.
-    This allows scripts without a main() function to run.
+    This executes the top-level code regardless of whether a main() function exists.
     """
     try:
         runpy.run_path(script_path, run_name="__main__")
