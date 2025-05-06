@@ -22,13 +22,18 @@ def sort_csv_by_article_number(file, article_numbers, shipping_name):
     else:
         df_grouped = df_filtered.groupby("Article number", as_index=False).size().rename(columns={"size": "Qty"})
 
+    # Add Product name by taking the first occurrence per article number
+    if "Product" in df.columns:
+        product_df = df[["Article number", "Product"]].drop_duplicates(subset="Article number")
+        df_grouped = pd.merge(df_grouped, product_df, on="Article number", how="left")
+
     # Optional: join back with 'Stock' if needed
     if "Stock" in df.columns:
         stock_df = df[["Article number", "Stock"]].drop_duplicates()
         df_grouped = pd.merge(df_grouped, stock_df, on="Article number", how="left")
-        df_grouped = df_grouped[["Article number", "Stock", "Qty"]]
+        df_grouped = df_grouped[["Article number", "Qty", "Product", "Stock"]]
     else:
-        df_grouped = df_grouped[["Article number", "Qty"]]
+        df_grouped = df_grouped[["Article number", "Qty", "Product"]]
 
     # Sort by article number
     df_sorted = df_grouped.sort_values(by="Article number")
